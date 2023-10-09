@@ -1,0 +1,18 @@
+[submodule "MU-MNC002A-labs-auth"]
+	path = MU-MNC002A-labs-auth
+	url = https://github.com/Aritz1019/MU-MNC002A-labs-auth.git
+[submodule "MU-MNC002A-labs-delivery"]
+	path = MU-MNC002A-labs-delivery
+	url = https://github.com/embid13/MU-MNC002A-labs-delivery.git
+[submodule "MU-MNC002A-labs-logs"]
+	path = MU-MNC002A-labs-logs
+	url = https://github.com/Aritz1019/MU-MNC002A-labs-logs.git
+[submodule "MU-MNC002A-labs-machine"]
+	path = MU-MNC002A-labs-machine
+	url = https://github.com/InigoAgirre/MU-MNC002A-labs-machine.git
+[submodule "MU-MNC002A-labs-order"]
+	path = MU-MNC002A-labs-order
+	url = https://github.com/G30v4/MU-MNC002A-labs-order.git
+[submodule "MU-MNC002A-labs-payment"]
+	path = MU-MNC002A-labs-payment
+	url = https://github.com/Aritz1019/MU-MNC002A-labs-payment.git
