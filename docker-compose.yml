@@ -1,0 +1,76 @@
+version: '3.1'
+services:
+  authentication:
+    build: MU-MNC002A-labs-auth/auth-app
+    ports:
+      - '13000:${UVICORN_PORT}'
+    volumes:
+      - './MU-MNC002A-labs-auth/auth-app/auth:/code'
+      - './db_volume:/volume'
+    environment:
+      PYTHONUNBUFFERED: 1
+      SQLALCHEMY_DATABASE_URL: ${AUTH_SQLALCHEMY_SQLITE_DATABASE_URI}
+      LOG_CONFIG_FILENAME: ${LOG_CONFIG_FILENAME}
+    networks:
+      lb7_network:
+        ipv4_address: '${USER_REPLICA1_IP}'
+    restart: unless-stopped
+
+  payment:
+    build: MU-MNC002A-labs-payment/payment-app
+    ports:
+      - '11000:${UVICORN_PORT}'
+    volumes:
+      - './MU-MNC002A-labs-payment/payment-app/payment:/code'
+      - './db_volume:/volume'
+    environment:
+      PYTHONUNBUFFERED: 1
+      SQLALCHEMY_DATABASE_URL: ${PAYMENT_SQLALCHEMY_SQLITE_DATABASE_URI}
+      LOG_CONFIG_FILENAME: ${LOG_CONFIG_FILENAME}
+    networks:
+      lb7_network:
+        ipv4_address: '${PAYMENT_REPLICA1_IP}'
+    restart: unless-stopped
+
+  haproxy:
+    image: haproxy:2.6-alpine
+    ports:
+      - '${HAPROXY_PORT}:${HAPROXY_PORT}'
+      - '${HAPROXY_STATS_PORT}:${HAPROXY_STATS_PORT}'
+    expose:
+      - '${HAPROXY_PORT}'
+      - '${HAPROXY_STATS_PORT}'
+    networks:
+      lb7_network:
+        ipv4_address: '${HAPROXY_IP}'
+    environment:
+      - 'USER_REPLICA1_IP=${USER_REPLICA1_IP}'
+      - 'PAYMENT_REPLICA1_IP=${PAYMENT_REPLICA1_IP}'
+      - 'USER_REPLICA1_PORT=${UVICORN_PORT}'
+      - 'PAYMENT_REPLICA1_PORT=${UVICORN_PORT}'
+      - 'HAPROXY_PORT=${HAPROXY_PORT}'
+      - 'HAPROXY_STATS_PORT=${HAPROXY_STATS_PORT}'
+    restart: unless-stopped
+    volumes:
+      - './haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg'
+
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    networks:
+      lb7_network:
+        ipv4_address: '${RABBITMQ_IP}'
+
+networks:
+  lb7_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: '${NETWORK_SUBNET}'
