@@ -32,6 +32,22 @@ services:
         ipv4_address: '${PAYMENT_REPLICA1_IP}'
     restart: unless-stopped
 
+  log:
+    build: MU-MNC002A-labs-logs/log-app
+    ports:
+      - '18000:${UVICORN_PORT}'
+    volumes:
+      - './MU-MNC002A-labs-logs/log-app/log:/code'
+      - './db_volume:/volume'
+    environment:
+      PYTHONUNBUFFERED: 1
+      SQLALCHEMY_DATABASE_URL: ${LOG_SQLALCHEMY_SQLITE_DATABASE_URI}
+      LOG_CONFIG_FILENAME: ${LOG_CONFIG_FILENAME}
+    networks:
+      lb7_network:
+        ipv4_address: '${LOG_REPLICA1_IP}'
+    restart: on-failure
+
   haproxy:
     image: haproxy:2.6-alpine
     ports:
@@ -46,8 +62,10 @@ services:
     environment:
       - 'USER_REPLICA1_IP=${USER_REPLICA1_IP}'
       - 'PAYMENT_REPLICA1_IP=${PAYMENT_REPLICA1_IP}'
+      - 'LOG_REPLICA1_IP=${LOG_REPLICA1_IP}'
       - 'USER_REPLICA1_PORT=${UVICORN_PORT}'
       - 'PAYMENT_REPLICA1_PORT=${UVICORN_PORT}'
+      - 'LOG_REPLICA1_PORT=${UVICORN_PORT}'
       - 'HAPROXY_PORT=${HAPROXY_PORT}'
       - 'HAPROXY_STATS_PORT=${HAPROXY_STATS_PORT}'
     restart: unless-stopped
