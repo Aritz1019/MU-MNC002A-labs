@@ -27,6 +27,8 @@ services:
       PYTHONUNBUFFERED: 1
       SQLALCHEMY_DATABASE_URL: ${PAYMENT_SQLALCHEMY_SQLITE_DATABASE_URI}
       LOG_CONFIG_FILENAME: ${LOG_CONFIG_FILENAME}
+    depends_on:
+      - "authentication"
     networks:
       lb7_network:
         ipv4_address: '${PAYMENT_REPLICA1_IP}'
