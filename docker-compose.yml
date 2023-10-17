@@ -73,6 +73,7 @@ services:
     restart: unless-stopped
     volumes:
       - './haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg'
+      - './certs/haproxy/haproxy.pem:/usr/local/etc/haproxy/haproxy.pem'
 
   rabbitmq:
     image: rabbitmq:3.8-management-alpine
