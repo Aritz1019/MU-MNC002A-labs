@@ -97,15 +97,24 @@ services:
   rabbitmq:
     image: rabbitmq:3.8-management-alpine
     ports:
-      - "15672:15672"
-      - "5672:5672"
+      - "15671:15671"
+      - "5671:5671"
     environment:
       RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
       RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
       RABBITMQ_DEFAULT_VHOST: "/"
+      RABBITMQ_SSL_VERIFY: verify_none
+      RABBITMQ_SSL_CACERTFILE: /etc/ssl/certs/cert.pem
+      RABBITMQ_SSL_CERTFILE: /etc/ssl/certs/rabbitmq_cert.pem
+      RABBITMQ_SSL_KEYFILE: /etc/ssl/certs/rabbitmq_key.pem
+      RABBITMQ_SSL_FAIL_IF_NO_PEER_CERT: false
     networks:
       lb7_network:
         ipv4_address: '${RABBITMQ_IP}'
+    volumes:
+      - './certs/rabbitmq/rabbitmq_cert.pem:/etc/ssl/certs/rabbitmq_cert.pem'
+      - './certs/rabbitmq/rabbitmq_key.pem:/etc/ssl/certs/rabbitmq_key.pem'
+      - './certs/rabbitmq/cert.pem:/etc/ssl/certs/cert.pem'
 
 networks:
   lb7_network:
