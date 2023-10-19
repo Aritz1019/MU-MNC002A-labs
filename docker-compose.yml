@@ -50,6 +50,19 @@ services:
         ipv4_address: '${LOG_REPLICA1_IP}'
     restart: on-failure
 
+#  delivery:
+#    build: MU-MNC002A-labs-delivery/delivery_app
+#    ports:
+#      - '20000:${UVICORN_PORT}'
+#    volumes:
+#      - './MU-MNC002A-labs-delivery/delivery_app/delivery:/code'
+#      - './db_volume:/volume'
+#    environment:
+#      PYTHONUNBUFFERED: 1
+#      SQLALCHEMY_DATABASE_URL: ${DELIVERY_SQLALCHEMY_SQLITE_DATABASE_URI}
+#      LOG_CONFIG_FILENAME: ${LOG_CONFIG_FILENAME}
+#    restart: on-failure
+
   haproxy:
     image: haproxy:2.6-alpine
     ports:
