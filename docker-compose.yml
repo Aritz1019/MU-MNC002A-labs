@@ -61,6 +61,9 @@ services:
 #      PYTHONUNBUFFERED: 1
 #      SQLALCHEMY_DATABASE_URL: ${DELIVERY_SQLALCHEMY_SQLITE_DATABASE_URI}
 #      LOG_CONFIG_FILENAME: ${LOG_CONFIG_FILENAME}
+#    networks:
+#      lb7_network:
+#        ipv4_address: '${DELIVERY_REPLICA1_IP}'
 #    restart: on-failure
 
   haproxy:
