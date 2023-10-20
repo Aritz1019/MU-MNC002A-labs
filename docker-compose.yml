@@ -50,6 +50,22 @@ services:
         ipv4_address: '${LOG_REPLICA1_IP}'
     restart: on-failure
 
+  machine:
+    build: MU-MNC002A-labs-machine/machine-app
+    ports:
+      - '21000:${UVICORN_PORT}'
+    volumes:
+      - './MU-MNC002A-labs-machine/machine-app/machine:/code'
+      - './db_volume:/volume'
+    environment:
+      PYTHONUNBUFFERED: 1
+      SQLALCHEMY_DATABASE_URL: ${MACHINE_SQLALCHEMY_SQLITE_DATABASE_URI}
+      LOG_CONFIG_FILENAME: ${LOG_CONFIG_FILENAME}
+    networks:
+      lb7_network:
+        ipv4_address: '${MACHINE_REPLICA1_IP}'
+    restart: on-failure
+
 #  delivery:
 #    build: MU-MNC002A-labs-delivery/delivery_app
 #    ports:
