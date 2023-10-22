@@ -82,6 +82,22 @@ services:
         ipv4_address: '${DELIVERY_REPLICA1_IP}'
     restart: on-failure
 
+  order:
+    build: MU-MNC002A-labs-order/order_app
+    ports:
+      - '19000:${UVICORN_PORT}'
+    volumes:
+      - './MU-MNC002A-labs-order/order_app/ms_order:/code'
+      - './db_volume:/volume'
+    environment:
+      PYTHONUNBUFFERED: 1
+      SQLALCHEMY_DATABASE_URL: ${ORDER_SQLALCHEMY_SQLITE_DATABASE_URI}
+      LOG_CONFIG_FILENAME: ${LOG_CONFIG_FILENAME}
+    networks:
+      lb7_network:
+        ipv4_address: '${ORDER_REPLICA1_IP}'
+    restart: on-failure
+
   haproxy:
     image: haproxy:2.6-alpine
     ports:
