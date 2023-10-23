@@ -42,8 +42,6 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-      authentication:
-        condition: service_healthy
 
 
   log:
@@ -64,8 +62,6 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-      authentication:
-        condition: service_healthy
 
   machine:
     build: MU-MNC002A-labs-machine/machine-app
@@ -84,8 +80,6 @@ services:
     restart: on-failure
     depends_on:
       rabbitmq:
-        condition: service_healthy
-      authentication:
         condition: service_healthy
 
   delivery:
@@ -106,8 +100,6 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-      authentication:
-        condition: service_healthy
 
   order:
     build: MU-MNC002A-labs-order/order_app
@@ -126,8 +118,6 @@ services:
       RABBITMQ_PORT: "${RABBITMQ_PORT}"
     depends_on:
       rabbitmq:
-        condition: service_healthy
-      authentication:
         condition: service_healthy
     networks:
       lb7_network:
