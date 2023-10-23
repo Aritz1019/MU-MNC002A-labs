@@ -15,6 +15,14 @@ services:
       lb7_network:
         ipv4_address: '${USER_REPLICA1_IP}'
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:80/auth/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
   payment:
     build: MU-MNC002A-labs-payment/payment-app
@@ -27,12 +35,16 @@ services:
       PYTHONUNBUFFERED: 1
       SQLALCHEMY_DATABASE_URL: ${PAYMENT_SQLALCHEMY_SQLITE_DATABASE_URI}
       LOG_CONFIG_FILENAME: ${LOG_CONFIG_FILENAME}
-    depends_on:
-      - "authentication"
     networks:
       lb7_network:
         ipv4_address: '${PAYMENT_REPLICA1_IP}'
     restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      authentication:
+        condition: service_healthy
+
 
   log:
     build: MU-MNC002A-labs-logs/log-app
@@ -49,6 +61,11 @@ services:
       lb7_network:
         ipv4_address: '${LOG_REPLICA1_IP}'
     restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      authentication:
+        condition: service_healthy
 
   machine:
     build: MU-MNC002A-labs-machine/machine-app
@@ -65,6 +82,11 @@ services:
       lb7_network:
         ipv4_address: '${MACHINE_REPLICA1_IP}'
     restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      authentication:
+        condition: service_healthy
 
   delivery:
     build: MU-MNC002A-labs-delivery/delivery_app
@@ -81,6 +103,11 @@ services:
       lb7_network:
         ipv4_address: '${DELIVERY_REPLICA1_IP}'
     restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      authentication:
+        condition: service_healthy
 
   order:
     build: MU-MNC002A-labs-order/order_app
@@ -98,11 +125,15 @@ services:
       RABBITMQ_IP: "${RABBITMQ_IP}"
       RABBITMQ_PORT: "${RABBITMQ_PORT}"
     depends_on:
-      - "authentication"
+      rabbitmq:
+        condition: service_healthy
+      authentication:
+        condition: service_healthy
     networks:
       lb7_network:
         ipv4_address: '${ORDER_REPLICA1_IP}'
     restart: unless-stopped
+
 
   haproxy:
     image: haproxy:2.6-alpine
@@ -136,7 +167,9 @@ services:
       - './certs/haproxy/haproxy.pem:/usr/local/etc/haproxy/haproxy.pem'
 
   rabbitmq:
-    image: rabbitmq:3.8-management-alpine
+    build:
+      context: .
+      dockerfile: ./rabbitMQDockerfile
     ports:
       - "15671:15671"
       - "5671:5671"
@@ -156,6 +189,11 @@ services:
       - './certs/rabbitmq/rabbitmq_cert.pem:/etc/ssl/certs/rabbitmq_cert.pem'
       - './certs/rabbitmq/rabbitmq_key.pem:/etc/ssl/certs/rabbitmq_key.pem'
       - './certs/rabbitmq/cert.pem:/etc/ssl/certs/cert.pem'
+    healthcheck:
+      test: [ "CMD", "curl", "--insecure", "https://localhost:15671/" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 networks:
   lb7_network:
