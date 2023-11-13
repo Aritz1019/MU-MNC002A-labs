@@ -151,6 +151,7 @@ services:
       - 'MACHINE_REPLICA1_PORT=${UVICORN_PORT}'
       - 'HAPROXY_PORT=${HAPROXY_PORT}'
       - 'HAPROXY_STATS_PORT=${HAPROXY_STATS_PORT}'
+      - 'CONSUL_IP=${CONSUL_IP}'
     restart: unless-stopped
     volumes:
       - './haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg'
@@ -184,6 +185,22 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  consul:
+    container_name: consul
+    image: 'consul:latest'
+    logging:
+      driver: none
+    expose:
+      - '8300'
+      - '8301'
+      - '8500'
+      - '8501'
+      - '8600'
+    network_mode: "host"
+    volumes:
+      - ./consul/config:/consul/config
+      - ./consul/certs:/certs/consul
 
 networks:
   lb7_network:
