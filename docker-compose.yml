@@ -188,19 +188,17 @@ services:
 
   consul:
     container_name: consul
-    image: 'consul:latest'
-    logging:
-      driver: none
-    expose:
-      - '8300'
-      - '8301'
-      - '8500'
-      - '8501'
-      - '8600'
-    network_mode: "host"
-    volumes:
-      - ./consul/config:/consul/config
-      - ./consul/certs:/certs/consul
+    image: 'consul:1.15'
+    ports:
+      - '8300:8300'
+      - '8301:8301'
+      - '8301:8301/udp'
+      - '8500:8500'
+      - '8600:8600'
+      - '8600:8600/udp'
+    networks:
+      lb7_network:
+        ipv4_address: '${CONSUL_IP}'
 
 networks:
   lb7_network:
