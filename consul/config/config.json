@@ -5,6 +5,4 @@
     "enabled": true,
     "content_path": ""
   },
-  "verify_incoming": false,
-  "verify_outgoing": false
 }
