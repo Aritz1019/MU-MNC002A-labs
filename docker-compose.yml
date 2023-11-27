@@ -197,6 +197,8 @@ services:
       - '8500:8500'
       - '8600:8600'
       - '8600:8600/udp'
+    volumes:
+      - ./consul/config:/consul/config/
     networks:
       lb7_network:
         ipv4_address: '${CONSUL_IP}'
