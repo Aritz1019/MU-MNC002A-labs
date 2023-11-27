@@ -7,6 +7,7 @@ services:
     volumes:
       - './MU-MNC002A-labs-auth/auth-app/auth:/code'
       - './db_volume:/volume'
+      - './certs/fastapi:/app/certs'
     environment:
       PYTHONUNBUFFERED: 1
       SQLALCHEMY_DATABASE_URL: ${AUTH_SQLALCHEMY_SQLITE_DATABASE_URI}
