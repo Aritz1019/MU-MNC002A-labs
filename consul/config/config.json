@@ -1,8 +1,0 @@
-{
-  "datacenter": "microservices",
-  "log_level": "info",
-  "ui_config": {
-    "enabled": true,
-    "content_path": ""
-  },
-}
