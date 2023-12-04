@@ -89,10 +89,11 @@ services:
   delivery:
     build: MU-MNC002A-labs-delivery/delivery_app
     ports:
-      - '20000:${UVICORN_PORT}'
+      - '20000:${UVICORN_PORT_TLS}'
     volumes:
       - './MU-MNC002A-labs-delivery/delivery_app/delivery:/code'
       - './db_volume:/volume'
+      - './certs/fastapi:/code/certs'
     environment:
       PYTHONUNBUFFERED: 1
       SQLALCHEMY_DATABASE_URL: ${DELIVERY_SQLALCHEMY_SQLITE_DATABASE_URI}
